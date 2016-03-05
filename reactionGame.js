@@ -7,6 +7,8 @@
 	"use strict";
 
 	var timer = null; // Interval variable
+	var colorTimer = null;
+	var index = 1;
 	var correct = 0; // Total number of points
 	var time = 0; // Total time elapsed
 	var timeCheck = time + (intervalTime * 100); // When the interval should end
@@ -16,12 +18,31 @@
 	var guesses = []; // Log of how long between each guess
 	var bestTime = 4; // Default best guess time
 	var intervalTime = 4; // Initial time between intervals (initial = 4 sec)
+	var OPTIONS = ["black", "red", "yellow", "blue", "green", 
+		"pink", "purple", "orange", "cyan"];
 
 	// Anonymous function that is called when the page loads
 	window.onload = function() {
+		// Causes the word 'color' in the title to change colors
+		changeColor();
 		// Creates the start button for the game
 		makeButton("Start");
 	};
+
+	// Initializes the color change of the word 'color' in the title
+	function changeColor() {
+		colorTimer = setInterval(startChange, 200)
+	}
+
+	// Interval that constantly changes the word 'color'. Turns off when game starts
+	function startChange() {
+		document.getElementById("colorChange").style.color = OPTIONS[index];
+		if (index > OPTIONS.length - 2) {
+			index = 0;
+		} else {
+			index++;
+		}
+	}
 
 	// Creates the start button for the game
 	function makeButton(text) {
@@ -70,12 +91,10 @@
 	// Helper function that returns 4 pairs of colors to be used as answer options
 	function createOptions() {
 		// All available color options in game
-		var options = ["red", "yellow", "black", "blue", "green", 
-		"pink", "purple", "orange", "cyan"];
 		var colors = [];
 		while (colors.length < 4) {
-			var randIndex = Math.floor(Math.random() * options.length);
-			var color = options[randIndex];
+			var randIndex = Math.floor(Math.random() * OPTIONS.length);
+			var color = OPTIONS[randIndex];
 			var isNew = true;
 			for (var i = 0; i < colors.length; i++) {
 				if (colors[i] == color) {
@@ -177,6 +196,7 @@
 	/* Called if answer picked was incorrect. Displays stats about game
 	and generates a table of questions and response times */
 	function lose() {
+		changeColor();
 		running = true;
 		clearInterval(timer);
 		timer = null;
@@ -249,6 +269,8 @@
 	/* Resets game board and initiates a 3 second countdown for the 
 	game to start */
 	function preGame() {
+		clearInterval(colorTimer);
+		colorTimer = null;
 		document.getElementById("statsArea").style.display = "none";
 		document.getElementById("avg").style.display = "none";
 		time = 0;
