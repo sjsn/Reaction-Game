@@ -187,11 +187,9 @@
 		time = Math.round(time / 100);
 		document.getElementById("timeStats").innerHTML = "Total Time: " + time + " seconds";
 		document.getElementById("avgGuess").innerHTML = "Average Reaction Time: " + avgGuess + " seconds";
-		var avg = document.createElement("p");
-		if (bestTime < 2) {
-			avg.innerHTML = "Fastest Reaction Time: " + bestTime + " seconds";
-			avg.id = "avg";
-			document.getElementById("statsArea").appendChild(avg);
+		if (bestTime != 4) {
+			document.getElementById("avg").style.display = "initial";
+			document.getElementById("avg").innerHTML = "Fastest Reaction Time: " + bestTime + " seconds";
 		}
 		drawResults();
 		makeButton("Retry");
@@ -252,9 +250,10 @@
 	game to start */
 	function preGame() {
 		document.getElementById("statsArea").style.display = "none";
+		document.getElementById("avg").style.display = "none";
 		time = 0;
 		correct = 0;
-		bestTime = 2;
+		bestTime = 4;
 		intervalTime = 4;
 		timeCheck = time + (intervalTime * 100);
 		guessTime = 0;
