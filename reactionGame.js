@@ -7,8 +7,6 @@
 	"use strict";
 
 	var timer = null; // Interval variable
-	var colorTimer = null;
-	var index = 1;
 	var correct = 0; // Total number of points
 	var time = 0; // Total time elapsed
 	var timeCheck = time + (intervalTime * 100); // When the interval should end
@@ -18,8 +16,8 @@
 	var guesses = []; // Log of how long between each guess
 	var bestTime = 4; // Default best guess time
 	var intervalTime = 4; // Initial time between intervals (initial = 4 sec)
-	var OPTIONS = ["black", "red", "yellow", "blue", "green", 
-		"pink", "purple", "orange", "cyan"];
+	var OPTIONS = ["black", "purple", "blue", "cyan", "green", "yellow", 
+	"orange", "pink", "red"];
 
 	// Anonymous function that is called when the page loads
 	window.onload = function() {
@@ -31,16 +29,14 @@
 
 	// Initializes the color change of the word 'color' in the title
 	function changeColor() {
-		colorTimer = setInterval(startChange, 200)
-	}
-
-	// Interval that constantly changes the word 'color'. Turns off when game starts
-	function startChange() {
-		document.getElementById("colorChange").style.color = OPTIONS[index];
-		if (index > OPTIONS.length - 2) {
-			index = 0;
-		} else {
-			index++;
+		var letters = ["c", "o1", "l", "o2", "r"];
+		var randIndex = Math.floor(Math.random() * OPTIONS.length);
+		for (var i = 0; i < letters.length; i++) {
+			if (randIndex == 0 || randIndex == OPTIONS.length) {
+				randIndex = 1;
+			}
+			document.getElementById(letters[i]).style.color = OPTIONS[randIndex];
+			randIndex++;
 		}
 	}
 
@@ -196,7 +192,15 @@
 	/* Called if answer picked was incorrect. Displays stats about game
 	and generates a table of questions and response times */
 	function lose() {
-		changeColor();
+		var lossWord;
+		var lossColor;
+		if (this) {
+			lossWord = this.innerHTML;
+			lossColor = this.style.color;
+		} else {
+			lossWord = "nothing";
+			lossColor = "black"
+		}
 		running = true;
 		clearInterval(timer);
 		timer = null;
@@ -211,7 +215,7 @@
 			document.getElementById("avg").style.display = "initial";
 			document.getElementById("avg").innerHTML = "Fastest Reaction Time: " + bestTime + " seconds";
 		}
-		drawResults();
+		drawResults(lossWord, lossColor);
 		makeButton("Retry");
 	}
 
@@ -231,7 +235,7 @@
 	}
 
 	// Helper function to draw a table displaying questions and guess times
-	function drawResults() {
+	function drawResults(lossWord, lossColor) {
 		var results = document.createElement("h2");
 		results.innerHTML = "Results:";
 		document.getElementById("tableArea").appendChild(results);
@@ -240,7 +244,7 @@
 		var row = document.createElement("tr");
 		var title1 = document.createElement("th");
 		var title2 = document.createElement("th");
-		title1.innerHTML = "Questions";
+		title1.innerHTML = "Instructions";
 		title2.innerHTML = "Response Time";
 		row.appendChild(title1);
 		row.appendChild(title2);
@@ -259,7 +263,12 @@
 		var cell1 = document.createElement("td");
 		var cell2 = document.createElement("td");
 		cell1.innerHTML = questions.pop();
-		cell2.innerHTML = "Fail";
+		var span = document.createElement("span");
+		span.id = "lossColor";
+		span.style.color = lossColor;
+		span.innerHTML = lossWord;
+		cell2.innerHTML = "You clicked ";
+		cell2.appendChild(span);
 		row.appendChild(cell1);
 		row.appendChild(cell2);
 		table.appendChild(row);
@@ -269,8 +278,6 @@
 	/* Resets game board and initiates a 3 second countdown for the 
 	game to start */
 	function preGame() {
-		clearInterval(colorTimer);
-		colorTimer = null;
 		document.getElementById("statsArea").style.display = "none";
 		document.getElementById("avg").style.display = "none";
 		time = 0;
