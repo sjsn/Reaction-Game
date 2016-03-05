@@ -1,2 +1,2 @@
 # Reaction-Game
-Currently available at students.washington.edu/sjsn/reactiongame/
+Currently available at www.samuelsannicolas.com/reactiongame/
