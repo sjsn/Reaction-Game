@@ -1,2 +1,2 @@
 # Reaction-Game
-READ ME
+Currently available at students.washington.edu/sjsn/reactiongame/
