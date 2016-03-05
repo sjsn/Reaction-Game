@@ -129,6 +129,10 @@ body {
 	left: 285px;
 }
 
+#statsArea {
+	display: none;
+}
+
 #tableArea table {
 	margin: auto;
 	border: 1px solid black;

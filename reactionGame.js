@@ -6,16 +6,16 @@
 (function() {
 	"use strict";
 
+	var timer = null; // Interval variable
 	var correct = 0; // Total number of points
 	var time = 0; // Total time elapsed
-	var timer = null; // Interval variable
 	var timeCheck = time + (intervalTime * 100); // When the interval should end
 	var running = true; // If the game is in a "playing" state
-	var guessTime = 0; // Total time this guess
+	var guessTime = 0; // Total time of current guess
 	var questions = []; // Log of each question asked
 	var guesses = []; // Log of how long between each guess
 	var bestTime = 4; // Default best guess time
-	var intervalTime = 4; // Initial interval time
+	var intervalTime = 4; // Initial time between intervals (initial = 4 sec)
 
 	// Anonymous function that is called when the page loads
 	window.onload = function() {
@@ -25,7 +25,7 @@
 
 	// Creates the start button for the game
 	function makeButton(text) {
-		var area = document.getElementById("gameArea");
+		var area = document.getElementById("playArea");
 		var button = document.createElement("div");
 		button.innerHTML = text + "!";
 		button.onmouseover = mouseOver;
@@ -59,7 +59,7 @@
 			lose();
 		} else if (running) {
 			running = false;
-			var area = document.getElementById("gameArea");
+			var area = document.getElementById("playArea");
 			area.innerHTML = "";
 			var colors = createOptions();
 			var words = createOptions();
@@ -69,7 +69,7 @@
 
 	// Helper function that returns 4 pairs of colors to be used as answer options
 	function createOptions() {
-		// All available colors in game
+		// All available color options in game
 		var options = ["red", "yellow", "black", "blue", "green", 
 		"pink", "purple", "orange", "cyan"];
 		var colors = [];
@@ -92,14 +92,16 @@
 	/* Generates a question and 4 options based on the color options 
 	returned from createOptions */
 	function drawGame(colors, words) {
-		var area = document.getElementById("gameArea");
-		var rand = Math.round(Math.random());
+		var area = document.getElementById("playArea");
+		var rand = Math.round(Math.random()); // 0 or 1
+		var color;
+		var option;
 		if (rand) {
-			var option = "color";
-			var color = colors[Math.floor(Math.random() * colors.length)];
+			option = "color";
+			color = colors[Math.floor(Math.random() * colors.length)];
 		} else {
-			var option = "word";
-			var color = words[Math.floor(Math.random() * colors.length)];
+			option = "word";
+			color = words[Math.floor(Math.random() * colors.length)];
 		}
 		var instr = document.createElement("p");
 		var word = document.createElement("span");
@@ -118,10 +120,9 @@
 		wordArea.id = "wordArea";
 		area.appendChild(wordArea);
 		for (var i = 0; i < colors.length; i++) {
-			//var holder = document.createElement("div");
-			//holder.id = "holder";
 			var item = document.createElement("div");
 			item.innerHTML = words[i];
+			// Changes yellow from default color for visibility
 			if (colors[i] == "yellow") {
 				item.style.color = "#e5e500";
 			} else {
@@ -139,7 +140,6 @@
 			} else {
 				item.onclick = lose;
 			}
-			//holder.appendChild(item);
 			wordArea.appendChild(item);
 		}
 	}
@@ -181,33 +181,17 @@
 		clearInterval(timer);
 		timer = null;
 		var avgGuess = calcGuesses();
-		var area = document.getElementById("gameArea");
-		area.innerHTML = "";
-		var lossMessage = document.createElement("h2");
-		lossMessage.innerHTML = "You lose!";
-		lossMessage.id = "message";
-		var statTitle = document.createElement("h2");
-		statTitle.innerHTML = "Statistics:";
-		statTitle.id = "title";
-		var pointStats = document.createElement("p");
-		pointStats.innerHTML = "Total Points: " + correct;
-		pointStats.id = "pointStats";
-		var timeStats = document.createElement("p");
+		document.getElementById("playArea").innerHTML = "";
+		document.getElementById("statsArea").style.display = "initial";
+		document.getElementById("pointStats").innerHTML = "Total Points: " + correct;
 		time = Math.round(time / 100);
-		timeStats.innerHTML = "Total Time: " + time + " seconds";
-		timeStats.id = "timeStats"
-		var guess = document.createElement("p");
-		guess.innerHTML = "Average Reaction Time: " + avgGuess + " seconds";
-		guess.id = "avgGuess";
+		document.getElementById("timeStats").innerHTML = "Total Time: " + time + " seconds";
+		document.getElementById("avgGuess").innerHTML = "Average Reaction Time: " + avgGuess + " seconds";
 		var avg = document.createElement("p");
-		var appends = [lossMessage, statTitle, pointStats, timeStats, guess];
-		for (var i = 0; i < appends.length; i++) {
-			area.appendChild(appends[i]);
-		}
 		if (bestTime < 2) {
 			avg.innerHTML = "Fastest Reaction Time: " + bestTime + " seconds";
 			avg.id = "avg";
-			area.appendChild(avg);
+			document.getElementById("statsArea").appendChild(avg);
 		}
 		drawResults();
 		makeButton("Retry");
@@ -267,6 +251,7 @@
 	/* Resets game board and initiates a 3 second countdown for the 
 	game to start */
 	function preGame() {
+		document.getElementById("statsArea").style.display = "none";
 		time = 0;
 		correct = 0;
 		bestTime = 2;
@@ -276,7 +261,7 @@
 		guesses = [];
 		questions = [];
 		document.getElementById("tableArea").innerHTML = "";
-		var area = document.getElementById("gameArea");
+		var area = document.getElementById("playArea");
 		area.innerHTML = "";
 		var num = document.createElement("p");
 		num.id = "num";
