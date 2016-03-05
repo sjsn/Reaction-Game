@@ -1,0 +1,178 @@
+/*
+	Created by Samuel San Nicolas
+*/
+body {
+	text-align: center;
+	font-family: "Lato", sans-serif;
+	margin: auto;
+	width: 75%;
+	padding: 0px;
+	background-color: #7fc6db;
+}
+
+#head h1 {
+	font-size: 35px;
+	margin-bottom: 0px;
+}
+
+#colorChange {
+}
+
+#head h2 {
+	margin-top: 10px;
+	margin-bottom: 0px;
+	color: red;
+}
+
+#head p {
+	margin-top: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 10px;
+	width: 50%;
+}
+
+#important {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+#sound {
+	position: absolute;
+	top: 5%;
+	right: 5%;
+}
+
+#sound img {
+	width: 20px;
+	height: 20px;
+}
+
+#sound:hover {
+	cursor: pointer;
+}
+
+#points {
+	position: absolute;
+	top: 4%;
+	left: 3%;
+	font-size: 25px;
+	border: 2px solid grey;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-weight: bold;
+	color: grey;
+}
+
+#gameArea {
+	margin: auto;
+	border: 2px black solid;
+	width: 600px;
+	height: 400px;
+	position: relative;
+	background-color: white;
+	color: black;
+}
+
+#Start, #Retry {
+	background-color: #44a4ee;
+	color: #FFFFFF;
+	height: 50px;
+	width: 120px;
+	font-size: 35px;
+	border: 2px #B2B2B2 solid;
+	border-radius: 10px;
+	position: absolute;
+	left: 240px;
+}
+
+#Start {
+	top: 175px;
+}
+
+#Retry {
+	top: 270px;
+}
+
+#foot a {
+	color: black;
+	text-decoration: none;
+	font-style: italic;
+	font-size: 15px;
+}
+
+#foot a:hover {
+	color: #F0F0F0 ;
+}
+
+#item {
+	margin: 0px;
+	border: 0px;
+	height: 160px;
+	width: 200px;
+	position: absolute;
+	font-size: 25px;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+#item:hover {
+	cursor: pointer;
+}
+
+#instructions {
+	top: 10px;
+	left: 0px;
+	width: 100%;
+	position: relative;
+	font-size: 25px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#message {
+	color: red;
+}
+
+#wordArea {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-left: 100px;
+	margin-right: 100px;
+	height: 320px;
+	width: 400px;
+	position: relative;
+	overflow: hidden;
+}
+
+#num {
+	font-size: 50px;
+	position: absolute;
+	top: 115px;
+	left: 285px;
+}
+
+#statsArea, #avg {
+	display: none;
+}
+
+#tableArea table {
+	margin: auto;
+	border: 1px solid black;
+	background-color: white;
+	color: black;
+}
+
+#tableArea tr, #tableArea td {
+	border: 1px solid black;
+	text-align: left;
+}
+
+#tableArea h2 {
+	color: red;
+}
+
+#bug {
+	font-size: 10px;
+	margin: auto;
+}
