@@ -1,3 +1,4 @@
+
 <!--
 	Created by Samuel San Nicolas.
 -->
@@ -27,6 +28,9 @@
 			Pick the correct color or word! You have <span id="important">4 seconds</span> to do so, 
 			with the timer getting faster and faster each time!
 		</p>
+		<a href="https://docs.google.com/spreadsheets/d/1Xi5XRJXKIpE3eXhk7LHy8M7LrUIkaTjJdNxvhDyc02Y/edit?usp=sharing" target="_blank">
+			<p>Click here to go directly to the Google Doc to paste in your data!</p>
+		</a>
 	</div>
 	<div id="gameArea">
 		<div id="sound">
@@ -44,9 +48,19 @@
 			<p id="timeStats"></p>
 			<p id="avgGuess"></p>
 			<p id="avg"></p>
+			<div id="info">
+				Copy this data and paste it into the '<span id="important">Avg</span>' cell to report data!
+				<br />
+				<input type="text" id="data" readOnly>
+				<div id="reminderText">
+					Be sure to highlight all the way right! ->
+				</div>
+			</div>
 		</div>
 	</div>
 	<div id="tableArea">
+		<table id="results">
+		</table>
 	</div>
 	<br />
 	<div id="foot">

@@ -19,15 +19,18 @@
 	var OPTIONS = ["black", "purple", "blue", "cyan", "green", "yellow", 
 	"orange", "pink", "red"];
 	var sounds = true; // If the player clicked mute or not
+	var soundFiles = []; // Available sound objects
 
 	// Anonymous function that is called when the page loads
 	window.onload = function() {
 		// Causes the word 'color' in the title to change colors
 		changeColor();
+		// Preloads the audio files to reduce lag
+		preloadAudio();
 		// Toggles the sound if the player clicks mute
 		document.getElementById("sound").onclick = mute;
-		// Creates the start button for the game
-		makeButton("Start");
+		// Creates the start button for the game when audio files have loaded
+		soundFiles[1].oncanplaythrough = makeButton("Start");
 	};
 
 	// Initializes the color change of the word 'color' in the title
@@ -43,6 +46,15 @@
 		}
 	}
 
+	// Preloads audio files to help load on mobile
+	function preloadAudio() {
+		var files = ["count.wav", "loss.wav", "start.wav", "win.wav"];
+		for (var i = 0; i < files.length; i++) {
+			soundFiles[i] = new Audio("assets/sounds/" + files[i]);
+			soundFiles[i].preload = "auto";
+		}
+	}
+
 	// Toggles the sound if the player clicks mute
 	function mute() {
 		sounds = !sounds;
@@ -50,8 +62,19 @@
 		if (sounds) {
 			img.src = "assets/img/play.png";
 		} else {
-			img.src = "assets/img/mute.png";
+			img.src = "assets/img/mute.png"
 		}
+	}
+
+	// Helper function that plays pre-loaded audio files
+	function playSound(file) {
+		var sound = soundFiles[file];
+		sound.muted = !sounds;
+		sound.volume = 0.1;
+		if (sound.currentTime) {
+			sound.currentTime = 0;
+		}
+		sound.play();
 	}
 
 	// Creates the start button for the game
@@ -186,10 +209,7 @@
 
 	// Called if answer clicked was correct answer. Changes stats accordingly
 	function win() {
-		if (sounds) {
-			var sound = new Audio("assets/sounds/win.wav");
-			sound.play();
-		}
+		playSound(3);
 		running = true;
 		if (intervalTime > 1.25) {
 			intervalTime -= 0.25;
@@ -210,10 +230,7 @@
 	/* Called if answer picked was incorrect. Displays stats about game
 	and generates a table of questions and response times */
 	function lose() {
-		if (sounds) {
-			var sound = new Audio("assets/sounds/loss.wav");
-			sound.play();
-		}
+		playSound(1);
 		var lossWord;
 		var lossColor;
 		if (this) {
@@ -229,16 +246,24 @@
 		var avgGuess = calcGuesses();
 		document.getElementById("playArea").innerHTML = "";
 		document.getElementById("statsArea").style.display = "initial";
-		document.getElementById("pointStats").innerHTML = "Total Points: " + correct;
+		document.getElementById("pointStats").innerHTML = "Total Points: " + 
+		correct;
 		time = Math.round(time / 100);
-		document.getElementById("timeStats").innerHTML = "Total Time: " + time + " seconds";
-		document.getElementById("avgGuess").innerHTML = "Average Reaction Time: " + avgGuess + " seconds";
+		document.getElementById("timeStats").innerHTML = 
+		"Total Time: " + time + " seconds";
+		document.getElementById("avgGuess").innerHTML = 
+		"Average Reaction Time: " + avgGuess + " seconds";
 		if (bestTime != 4) {
 			document.getElementById("avg").style.display = "initial";
-			document.getElementById("avg").innerHTML = "Fastest Reaction Time: " + bestTime + " seconds";
+			document.getElementById("avg").innerHTML = 
+			"Fastest Reaction Time: " + bestTime + " seconds";
 		}
 		drawResults(lossWord, lossColor);
 		makeButton("Retry");
+		if (guesses.length > 0) {
+			// Creates a copy-text pop up for easy data transfer
+			makeCopyArea(avgGuess);
+		}
 	}
 
 	// Helper function to calculate the average guess time
@@ -256,45 +281,71 @@
 		}
 	}
 
+	// Allows the user to copy their output for easier data reporting 
+	function makeCopyArea(avgGuess) {
+		document.getElementById("info").style.display = "initial";
+		var data = document.getElementById("data");
+		var output = avgGuess + "\t";
+		for (var i = 0; i < guesses.length; i++) {
+			output += guesses[i] / 100 + "\t";
+		}
+		data.value = " " + output + "\t";
+		data.onmouseover = reminder;
+		data.onmouseleave = offReminder;
+
+	}
+
+	// Makes the rmeinder text visible when the text area is hovered over
+	function reminder() {
+		document.getElementById("reminderText").style.display = "initial";
+	}
+
+	// Makes the reminder text vanish when the text area is not hovered over
+	function offReminder() {
+		document.getElementById("reminderText").style.display = "none";
+	}
+
 	// Helper function to draw a table displaying questions and guess times
 	function drawResults(lossWord, lossColor) {
-		var results = document.createElement("h2");
-		results.innerHTML = "Results:";
-		document.getElementById("tableArea").appendChild(results);
-		var table = document.createElement("table");
-		table.id = "resultsTable";
+		document.getElementById("tableArea").style.display = "initial";
+		var table = document.getElementById("results");
+		table.innerHTML = "";
+		var caption = document.createElement("caption");
+		caption.innerHTML = "Results:";
+		table.appendChild(caption);
 		var row = document.createElement("tr");
 		var title1 = document.createElement("th");
 		var title2 = document.createElement("th");
-		title1.innerHTML = "Instructions";
-		title2.innerHTML = "Response Time";
+		var title3 = document.createElement("th");
+		title1.innerHTML = "#";
+		title2.innerHTML = "Instructions";
+		title3.innerHTML = "Response Time";
 		row.appendChild(title1);
 		row.appendChild(title2);
+		row.appendChild(title3);
 		table.appendChild(row);
-		for (var i = 0; i < guesses.length; i++) {
+		for (var i = 0; i < questions.length; i++) {
 			var row = document.createElement("tr");
 			var cell1 = document.createElement("td");
 			var cell2 = document.createElement("td");
-			cell1.innerHTML = questions[i];
-			cell2.innerHTML = (guesses[i] / 100) + " sec";
+			var cell3 = document.createElement("td");
+			cell1.innerHTML = i + 1 + ". ";
+			cell2.innerHTML = questions[i];
 			row.appendChild(cell1);
 			row.appendChild(cell2);
+			if (i == questions.length - 1) {
+				var span = document.createElement("span");
+				span.id = "lossColor";
+				span.style.color = lossColor;
+				span.innerHTML = lossWord;
+				cell3.innerHTML = "You clicked ";
+				cell3.appendChild(span);
+			} else {
+				cell3.innerHTML = (guesses[i] / 100) + " sec";
+			}
+			row.appendChild(cell3);
 			table.appendChild(row);
 		}
-		var row = document.createElement("tr");
-		var cell1 = document.createElement("td");
-		var cell2 = document.createElement("td");
-		cell1.innerHTML = questions.pop();
-		var span = document.createElement("span");
-		span.id = "lossColor";
-		span.style.color = lossColor;
-		span.innerHTML = lossWord;
-		cell2.innerHTML = "You clicked ";
-		cell2.appendChild(span);
-		row.appendChild(cell1);
-		row.appendChild(cell2);
-		table.appendChild(row);
-		document.getElementById("tableArea").appendChild(table);
 	}
 
 	/* Resets game board and initiates a 3 second countdown for the 
@@ -302,7 +353,8 @@
 	function preGame() {
 		document.getElementById("statsArea").style.display = "none";
 		document.getElementById("avg").style.display = "none";
-		document.getElementById("points").innerHMTML = "0"Isdso;
+		document.getElementById("info").style.display = "none";
+		document.getElementById("points").innerHMTML = "0";
 		time = 0;
 		correct = 0;
 		bestTime = 4;
@@ -311,16 +363,13 @@
 		guessTime = 0;
 		guesses = [];
 		questions = [];
-		document.getElementById("tableArea").innerHTML = "";
+		document.getElementById("tableArea").style.display = "none";
 		var area = document.getElementById("playArea");
 		area.innerHTML = "";
 		var num = document.createElement("p");
 		num.id = "num";
 		num.innerHTML = "3";
-		if (sounds) {
-			var sound = new Audio("assets/sounds/count.wav");
-			sound.play();
-		}
+		playSound(0);
 		area.appendChild(num);
 		timer = setInterval(countDown, 1000);
 	}
@@ -332,18 +381,12 @@
 		if (count) {
 			count--;
 			if (count == 0) {
-				if (sounds) {
-					var sound = new Audio("assets/sounds/start.wav");
-					sound.play();
-				}
+				playSound(2);
 				num.style.left = "260px"
 				num.style.color = "green";
 				num.innerHTML = "Go!";
 			} else {
-				if (sounds) {
-					var sound = new Audio("assets/sounds/count.wav");
-					sound.play();
-				}
+				playSound(0);
 				document.getElementById("num").innerHTML = "" + count;
 			}
 		} else {
